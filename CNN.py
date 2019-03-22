@@ -170,4 +170,13 @@ for num,data in enumerate(test[:16]):
     y.axes.get_xaxis().set_visible(False)
     y.axes.get_yaxis().set_visible(False)
 plt.show()
+#%%
+from sklearn.metrics import confusion_matrix
+predictions = model.predict(X_test)
+#print(predictions)
+y_pred = (predictions > 0.95)
+#confusion_matrix(Y_test,y_pred)
+#print(confusion_matrix)
+matrix = confusion_matrix(Y_test.argmax(axis=1), y_pred.argmax(axis=1))
+print(matrix)
 print(out)
