@@ -172,6 +172,7 @@ for num,data in enumerate(test[:16]):
 plt.show()
 #%%
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report 
 predictions = model.predict(X_test)
 #print(predictions)
 y_pred = (predictions > 0.95)
@@ -179,4 +180,6 @@ y_pred = (predictions > 0.95)
 #print(confusion_matrix)
 matrix = confusion_matrix(Y_test.argmax(axis=1), y_pred.argmax(axis=1))
 print(matrix)
+print('Report : ')
+print (classification_report(Y_test.argmax(axis=1), y_pred.argmax(axis=1)))
 print(out)
