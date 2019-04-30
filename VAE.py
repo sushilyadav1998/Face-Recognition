@@ -16,7 +16,7 @@ from scipy.misc import imresize, imsave
 
 #%%
 # dimensionality of the latents space 
-embedding_dim = 64
+embedding_dim = 32
 
 #Input layer
 input_img = layers.Input(shape=(4096,))  
