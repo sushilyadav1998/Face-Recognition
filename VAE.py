@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Mar 13 11:41:24 2019
+
+@author: sushil
+"""
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -16,7 +22,7 @@ from scipy.misc import imresize, imsave
 
 #%%
 # dimensionality of the latents space 
-embedding_dim = 32
+embedding_dim = 64
 
 #Input layer
 input_img = layers.Input(shape=(4096,))  
@@ -142,10 +148,7 @@ for i in range(n):
     cv2.waitKey(0)
     cv2.imwrite('Tony1/Tony_Blair.'+ str(i)+'.jpeg',255*decoded)
     #fig.savefig('face'+ str(i)+ '.jpg') use this to save the fig when plt is used
-   
-
     
 save_img()    
 plt.show()
  
-
