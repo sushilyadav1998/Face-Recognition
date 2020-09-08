@@ -20,8 +20,10 @@ import matplotlib.pyplot as plt
 #(64)AE_Database
 #LFWdataset1
 #(64)VAE_Self_DB
-Train_dir = r'C:\Users\sushilkumar.yadav\Desktop\vmware\Personal\Research\Image_recognition_in_wild_using_Deep_Learning\Database_FR\LFWdataset1'
+Train_dir = r'C:\Users\sushilkumar.yadav\Desktop\vmware\Personal\Research\Image_recognition_in_wild_using_Deep_Learning\Database_FR\New_VAE_Database\VAE_Database'
 Img_size = 64 #256
+
+#%%
 
 LR = 0.01
 def label_img(img):
@@ -50,6 +52,7 @@ def label_img(img):
         return [0,0,0,0,0,0,0,0,0,0,1]
 
 #%%
+        
 def create_training_data():
     training_data = []
     for img in tqdm(os.listdir(Train_dir)):
@@ -59,11 +62,25 @@ def create_training_data():
         path = os.path.join(Train_dir,img)
         #print(path,label)
         img = cv2.resize(cv2.imread(path,cv2.IMREAD_GRAYSCALE),(Img_size,Img_size))
-        
+        training_data.append([np.array(img),np.array(label)])
     shuffle(training_data)
     #np.save('sc_train_data.npy',training_data)
     return training_data
 
+#%%
+    
+#Test_dir = r'C:\Users\sushilkumar.yadav\Desktop\vmware\Personal\Research\Image_recognition_in_wild_using_Deep_Learning\Database_FR\New_VAE_Database\different_test_sample'
+#def process_test_data():
+#    testing_data = []
+#    for img in tqdm(os.listdir(Test_dir)):
+#        label = label_img(img)
+#        test_path = os.path.join(Test_dir,img)
+#        #img_num = img.split('.')[0]
+#        test_img =cv2.resize(cv2.imread(test_path,cv2.IMREAD_GRAYSCALE),(Img_size,Img_size))
+#        testing_data.append([np.array(test_img),np.array(label)])
+#    #np.save('sc_test_data.npy',testing_data)
+#    shuffle(testing_data)
+#    return testing_data
 
 #%%Load Traing and Testing Data:
 train_data = create_training_data()
@@ -73,6 +90,9 @@ test = train_data[-50:]
 X_train= np.array([i[0] for i in train]).reshape(-1, Img_size, Img_size, 1)
 Y_train = np.array([i[1] for i in train])
 
+#%%
+#test_data = process_test_data()
+#test = test_data[:-1]
 X_test = np.array([i[0] for i in test]).reshape(-1, Img_size, Img_size, 1)
 Y_test= np.array([i[1] for i in test])
 
@@ -91,7 +111,7 @@ from tensorflow.python.keras.callbacks import ModelCheckpoint
 from tensorflow.python.keras import models
 #from keras import UpSampling2D, ZeroPadding2D, Input
 batch_size = 5       
-hidden_neurons = 1000
+hidden_neurons = 100
 classes = 11    
 epochs = 10
 
@@ -148,8 +168,8 @@ print('Test accuracy:', score[1]*100)
 
  #%%
 plt.figure()
-plt.plot(history.history['accuracy'], label='accuracy')
-plt.plot(history.history['val_accuracy'], label = 'val_accuracy')
+plt.plot(history.history['acc'], label='accuracy')
+plt.plot(history.history['val_acc'], label = 'val_accuracy')
 plt.plot(history.history['loss'], label = 'Training Loss')
 plt.plot(history.history['val_loss'], label = 'Validation Loss')
 plt.xlabel('Epoch')
@@ -170,56 +190,7 @@ model.summary()
 plot_model(model, to_file='model.png', show_shapes=True, show_layer_names=True)
 
 
-#%%
 
-img_path = r'C:\Users\sushilkumar.yadav\Desktop\vmware\Personal\Research\Image_recognition_in_wild_using_Deep_Learning\Database_FR\LFWdataset1\George_Bush.26.jpeg'      
-img = cv2.resize(cv2.imread(img_path,cv2.IMREAD_GRAYSCALE),(Img_size,Img_size))
-img = image.img_to_array(img)
-img = np.expand_dims(img, axis=0)
-img /= 255.
-print(img.shape)
-
-#%%
-
-layer_outputs = [layer.output for layer in model.layers[:20]] # Extracts the outputs of the top 12 layers
-activation_model = models.Model(inputs=model.input, outputs=layer_outputs) # Creates a model that will return these outputs, given the model input
-
-#%%
-
-activations = activation_model.predict(img) # Returns a list of five Numpy arrays: one array per layer activation
-first_layer_activation = activations[0]
-print(first_layer_activation.shape)
-plt.matshow(first_layer_activation[0, :, :, 1], cmap='viridis')
-
-#%%
-layer_names = []
-for layer in model.layers[:20]:
-    layer_names.append(layer.name) # Names of the layers, so you can have them as part of your plot
-    
-images_per_row = 4
-for layer_name, layer_activation in zip(layer_names, activations): # Displays the feature maps
-    n_features = layer_activation.shape[-1] # Number of features in the feature map
-    size = layer_activation.shape[1] #The feature map has shape (1, size, size, n_features).
-    n_cols = n_features // images_per_row # Tiles the activation channels in this matrix
-    display_grid = np.zeros((size * n_cols, images_per_row * size))
-    for col in range(n_cols): # Tiles each filter into a big horizontal grid
-        for row in range(images_per_row):
-            channel_image = layer_activation[0,
-                                             :, :,
-                                             col * images_per_row + row]
-            channel_image -= channel_image.mean() # Post-processes the feature to make it visually palatable
-            channel_image /= channel_image.std()
-            channel_image *= 64
-            channel_image += 128
-            channel_image = np.clip(channel_image, 0, 255).astype('uint8')
-            display_grid[col * size : (col + 1) * size, # Displays the grid
-                         row * size : (row + 1) * size] = channel_image
-    scale = 1. / size
-    plt.figure(figsize=(scale * display_grid.shape[1],
-                        scale * display_grid.shape[0]))
-    plt.title(layer_name)
-    plt.grid(False)
-    plt.imshow(display_grid, aspect='auto', cmap='viridis')
 #%%
 import tensorflow as tf
 import matplotlib.pyplot as plt
@@ -232,7 +203,7 @@ for num,data in enumerate(test[:16]):
     og = img_data
     img_data = img_data.reshape(1,Img_size,Img_size,1)
     img_data = tf.cast(img_data, tf.float32)
-    model_output = model.predict([img_data])
+    model_output = model.predict([img_data],steps=1)
     #print(model_output)
     if np.argmax(model_output) == 0: str_label = 'Ariel_Sharon'
     elif np.argmax(model_output) == 1: str_label = 'Colin_Powell'
@@ -269,3 +240,55 @@ for num,data in enumerate(test[:16]):
     y.axes.get_yaxis().set_visible(False)
 plt.show()
 print(out)
+
+
+#%%
+
+#img_path = r'C:\Users\sushilkumar.yadav\Desktop\vmware\Personal\Research\Image_recognition_in_wild_using_Deep_Learning\Database_FR\New_VAE_Database\VAE_Database\Gerhard_Schroed.13.jpeg'      
+#img = cv2.resize(cv2.imread(img_path,cv2.IMREAD_GRAYSCALE),(Img_size,Img_size))
+#img = image.img_to_array(img)
+#img = np.expand_dims(img, axis=0)
+#img /= 255.
+#print(img.shape)
+#
+##%%
+#
+#layer_outputs = [layer.output for layer in model.layers[:20]] # Extracts the outputs of the top 12 layers
+#activation_model = models.Model(inputs=model.input, outputs=layer_outputs) # Creates a model that will return these outputs, given the model input
+#
+##%%
+#
+#activations = activation_model.predict(img) # Returns a list of five Numpy arrays: one array per layer activation
+#first_layer_activation = activations[0]
+#print(first_layer_activation.shape)
+#plt.matshow(first_layer_activation[0, :, :, 1], cmap='viridis')
+#
+##%%
+#layer_names = []
+#for layer in model.layers[:20]:
+#    layer_names.append(layer.name) # Names of the layers, so you can have them as part of your plot
+#    
+#images_per_row = 4
+#for layer_name, layer_activation in zip(layer_names, activations): # Displays the feature maps
+#    n_features = layer_activation.shape[-1] # Number of features in the feature map
+#    size = layer_activation.shape[1] #The feature map has shape (1, size, size, n_features).
+#    n_cols = n_features // images_per_row # Tiles the activation channels in this matrix
+#    display_grid = np.zeros((size * n_cols, images_per_row * size))
+#    for col in range(n_cols): # Tiles each filter into a big horizontal grid
+#        for row in range(images_per_row):
+#            channel_image = layer_activation[0,
+#                                             :, :,
+#                                             col * images_per_row + row]
+#            channel_image -= channel_image.mean() # Post-processes the feature to make it visually palatable
+#            channel_image /= channel_image.std()
+#            channel_image *= 64
+#            channel_image += 128
+#            channel_image = np.clip(channel_image, 0, 255).astype('uint8')
+#            display_grid[col * size : (col + 1) * size, # Displays the grid
+#                         row * size : (row + 1) * size] = channel_image
+#    scale = 1. / size
+#    plt.figure(figsize=(scale * display_grid.shape[1],
+#                        scale * display_grid.shape[0]))
+#    plt.title(layer_name)
+#    plt.grid(False)
+#    plt.imshow(display_grid, aspect='auto', cmap='viridis')

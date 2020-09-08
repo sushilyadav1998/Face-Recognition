@@ -123,8 +123,8 @@ x_test = x_test.astype('float32') / 255
 
 # network parameters
 input_shape = (original_dim, )
-intermediate_dim = 512
-batch_size = 128
+intermediate_dim = 
+batch_size = 1
 latent_dim = 2
 epochs = 50
 

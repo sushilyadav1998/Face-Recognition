@@ -12,8 +12,8 @@ import matplotlib.pyplot as plt
 #img11 = cv2.imread(r"C:\Users\sushilkumar.yadav\Desktop\vmware\Personal\Research\Image_recognition_in_wild_using_Deep_Learning\junichiro_koizumi.1.jpeg")
 #img12 = cv2.imread(r"C:\Users\sushilkumar.yadav\Desktop\vmware\Personal\Research\Image_recognition_in_wild_using_Deep_Learning\Database_FR\New_VAE_Database\junichiro_koizumi\junichiro_koizumi.0.jpeg")
 
-img11 = cv2.imread(r"C:\Users\sushilkumar.yadav\Desktop\vmware\Personal\Research\Image_recognition_in_wild_using_Deep_Learning\Database_FR\junichiro_koizumi\Junichiro_Koizumi.01.jpeg")
-img12 = cv2.imread(r"C:\Users\sushilkumar.yadav\Desktop\vmware\Personal\Research\Image_recognition_in_wild_using_Deep_Learning\Database_FR\New_VAE_Database\junichiro_koizumi\junichiro_koizumilat8.0.jpeg")
+img11 = cv2.imread(r"C:\Users\sushilkumar.yadav\Desktop\vmware\Personal\Research\Image_recognition_in_wild_using_Deep_Learning\Database_FR\LFWdataset1\Ariel_Sharon.01.jpeg")
+img12 = cv2.imread(r"C:\Users\sushilkumar.yadav\Desktop\vmware\Personal\Research\Image_recognition_in_wild_using_Deep_Learning\Database_FR\New_VAE_Database\Ariel_Sharon\Ariel_Sharon.49.jpeg")
 
 #%%
 img1 = cv2.cvtColor(img11, cv2.COLOR_BGR2GRAY)
