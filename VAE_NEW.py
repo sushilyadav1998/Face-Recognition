@@ -33,6 +33,7 @@ from tensorflow.python.keras import models
 import matplotlib.cm as cm
 from keras.layers import Reshape, Conv2DTranspose
 from keras.losses import mse
+from collections import Counter
 
 #%%
 
@@ -57,7 +58,7 @@ def sampling(args):
 #%%
 def plot_results(models,
                  data,
-                 batch_size=16,
+                 batch_size=128,
                  model_name="vae_mnist"):
     """Plots labels and MNIST digits as a function of the 2D latent vector
     # Arguments
@@ -77,17 +78,15 @@ def plot_results(models,
                                    batch_size=batch_size)
     print(z_mean.shape)
     plt.figure(figsize=(12,11))
+    plt.scatter(z_mean[:,0], z_mean[:,1], c = test2)
     
+    #%%
+    counter = Counter(test2)
     
-#        classes = ['Ariel_Sharon','Colin_Powell', 'George_Bush', 'Gerhard_Schroed', 'Hugo_Chavez', 'Jacques_Chirac', 'Jean_Chretien','John_Aschcroft', 'Junichiro_Koizumi', 'Serena_Williams', 'Tony_Blair']
-#        colours = ['r','b','y','g', 'cyan', 'violet', 'gray', 'brown', 'orange', 'pink', 'black']
-#        for (i,cla) in enumerate(set(classes)):
-#            xc = [p for (j,p) in enumerate(z_mean[:,0]) if classes[j]==cla]
-#            yc = [p for (j,p) in enumerate(z_mean[:,1]) if classes[j]==cla]
-#            cols = [c for (j,c) in enumerate(colours) if classes[j]==cla]
-    #testvalue.append([y_test[0], test1])
-    
-    plt.scatter(z_mean[:,0], z_mean[:,1], c = test2 )
+    #%%
+    ys = np.unique(test2)
+    means = np.array([np.mean(z_mean[test2 == y, :], axis=0) for y in ys])
+    plt.scatter(means[:, 0], means[:, 1], c=ys, s=200, edgecolors='black')
 
     #%%
     plt.colorbar()
@@ -114,7 +113,7 @@ def plot_results(models,
             #print(x_decoded.shape)
             #%%
             digit = x_decoded[0].reshape(digit_size, digit_size)
-            cv2.imwrite('New_VAE_Database/Tony_Blair/Tony_Blair.'+ str(i)+'.jpeg',255*digit)
+            #cv2.imwrite('New_VAE_Database/Tony_Blair/Tony_Blair.'+ str(i)+'.jpeg',255*digit)
             figure[i * digit_size: (i + 1) * digit_size,
                    j * digit_size: (j + 1) * digit_size] = digit
 
@@ -147,8 +146,8 @@ def plot_results(models,
 #(64)AE_Database
 #LFWdataset1
 #(64)VAE_Self_DB
-Train_dir = r'C:\Users\sushilkumar.yadav\Desktop\vmware\Personal\Research\Image_recognition_in_wild_using_Deep_Learning\Database_FR\LFW_Database_ind\Tony_Blair'
-#Train_dir = r'C:\Users\sushilkumar.yadav\Desktop\vmware\Personal\Research\Image_recognition_in_wild_using_Deep_Learning\Database_FR\LFWdataset1'
+#Train_dir = r'C:\Users\sushilkumar.yadav\Desktop\vmware\Personal\Research\Image_recognition_in_wild_using_Deep_Learning\Database_FR\LFW_Database_ind\Tony_Blair'
+Train_dir = r'C:\Users\sushilkumar.yadav\Desktop\vmware\Personal\Research\Image_recognition_in_wild_using_Deep_Learning\Database_FR\LFWdataset1'
 Img_size = 64 #256
 
 LR = 0.01
@@ -197,8 +196,8 @@ def create_training_data():
 
 #%%Load Traing and Testing Data:
 train_data = create_training_data()
-train = train_data[:-1] 
-test = train_data[-1:]
+train = train_data[:-50] 
+test = train_data[-50:]
 #%%
 x_train= np.array([i[0] for i in train]).reshape(-1, Img_size, Img_size, 1)
 y_train = np.array([i[1] for i in train])
@@ -226,7 +225,7 @@ test1 = []
 def convert_to_1d():
     
     #testvalue=[]
-    for i in range(49):
+    for i in range(500):
         if (y_test[i] == np.array([1,0,0,0,0,0,0,0,0,0,0])).all():
             test1.append(0)
         elif (y_test[i] == np.array([0,1,0,0,0,0,0,0,0,0,0])).all():
@@ -260,9 +259,9 @@ test2 = convert_to_1d()
 # network parameters
 input_shape = (original_dim, )
 intermediate_dim = 1024
-batch_size = 16
+batch_size = 128
 latent_dim = 2
-epochs = 500 #default:50
+epochs = 50 #default:50
 
 # VAE model = encoder + decoder
 # build encoder model
@@ -344,7 +343,7 @@ if __name__ == '__main__':
         vae.load_weights(args.weights)
     else:
         # train the autoencoder
-        vae.fit(x_train,
+        vae_history = vae.fit(x_train,
                 epochs=epochs,
                 batch_size=batch_size,
                 verbose=1,
