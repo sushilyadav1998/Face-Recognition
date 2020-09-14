@@ -36,7 +36,6 @@ from keras.losses import mse
 from collections import Counter
 
 #%%
-
 # reparameterization trick
 # instead of sampling from Q(z|X), sample epsilon = N(0,I)
 # z = z_mean + sqrt(var) * epsilon
@@ -79,17 +78,10 @@ def plot_results(models,
     print(z_mean.shape)
     plt.figure(figsize=(12,11))
     plt.scatter(z_mean[:,0], z_mean[:,1], c = test2)
-    
-    #%%
     #counter = Counter(test2)
-    
-    #%%
-    
     ys = np.unique(test2)
     means = np.array([np.mean(z_mean[test2 == y, :], axis=0) for y in ys])
     plt.scatter(means[:, 0], means[:, 1], c=ys, s=200, edgecolors='black')
-
-    #%%
     plt.colorbar()
     plt.xlabel("z[0]")
     plt.ylabel("z[1]")
@@ -110,9 +102,6 @@ def plot_results(models,
         for j, xi in enumerate(grid_x):
             z_sample = np.array([[xi, yi]])
             x_decoded = decoder.predict(z_sample)
-            #%%
-            #print(x_decoded.shape)
-            #%%
             digit = x_decoded[0].reshape(digit_size, digit_size)
             #cv2.imwrite('New_VAE_Database/Tony_Blair/Tony_Blair.'+ str(i)+'.jpeg',255*digit)
             figure[i * digit_size: (i + 1) * digit_size,
@@ -133,17 +122,6 @@ def plot_results(models,
     plt.show()
 
 #%%
-    
-#n=5
-#for i in range(n):
-#    digit = x_decoded[i].reshape(64,64) 
-#    cv2.waitKey(0)
-#    cv2.imwrite('Tony1/Tony_Blair.'+ str(i)+'.jpeg',255*decoded)
-#    plt.show()
-
-
-#%%
-
 #(64)AE_Database
 #LFWdataset1
 #(64)VAE_Self_DB
@@ -207,8 +185,6 @@ y_test= np.array([i[1] for i in train])
 
 
 #%%
-#(x_train, y_train), (x_test, y_test) = mnist.load_data()
-
 image_size = x_train.shape[1]
 original_dim = image_size * image_size
 #%%
@@ -219,10 +195,11 @@ x_test = x_test.astype('float32') / 255
 
 #%%
 test1 = []
+test_shape = y_test.shape
 def convert_to_1d():
     
     #testvalue=[]
-    for i in range(2910):
+    for i in range(test_shape[0]):
         if (y_test[i] == np.array([1,0,0,0,0,0,0,0,0,0])).all():
             test1.append(0)
         elif (y_test[i] == np.array([0,1,0,0,0,0,0,0,0,0])).all():
@@ -264,12 +241,6 @@ epochs = 20 #default:50
 #%%
 inputs = Input(shape=input_shape, name='encoder_input')
 
-#x = inputs
-#
-#x = Conv2D(32, 3, strides=2, activation='relu', padding='same')(x)
-#x = Conv2D(64, 3, strides=2, activation='relu', padding='same')(x)
-#
-#shape = K.int_shape(x)
 #%%
 x = Dense(intermediate_dim, activation='relu')(inputs)
 z_mean = Dense(latent_dim, name='z_mean')(x)
@@ -289,16 +260,6 @@ latent_inputs = Input(shape=(latent_dim,), name='z_sampling')
 x = Dense(intermediate_dim, activation='relu')(latent_inputs)
 outputs = Dense(original_dim, activation='sigmoid')(x)
 
-#x = Dense(shape[1] * shape[2] * shape[3], activation='relu')(x)
-#x = Reshape((shape[1], shape[2], shape[3]))(x)
-#
-#x = Conv2DTranspose(64, 3, strides=2, activation='relu', padding='same')(x)
-#x = Conv2DTranspose(32, 3, strides=2, activation='relu', padding='same')(x)
-#
-#outputs = Conv2DTranspose(filters=1, kernel_size=3, activation='sigmoid', padding='same', name='decoder_output')(x)
-#
-
-# instantiate decoder model
 decoder = Model(latent_inputs, outputs, name='decoder')
 decoder.summary()
 plot_model(decoder, to_file='vae_mlp_decoder.png', show_shapes=True)
@@ -346,36 +307,10 @@ if __name__ == '__main__':
                 validation_data=(x_test, None))
         #vae.save("vae_mlp_mnist.h5")
         
-        
-
 #%%
     plot_results(models,
                  data,
                  batch_size=batch_size,
                  model_name="vae_mlp")
     
-    #%%
-#encoder, decoder = models  
-#print(x_test[0].shape)
-##%% 
-#x_encoded = encoder.predict(x_test[0])
-#print(x_encoded.shape)
-##%%
-#x_decoded = decoder.predict(x_encoded)
-#
-#print(x_encoded.shape, x_decoded.shape)
-
-#%%
-#n = 50
-#for i in range(n):
-#    decoded = x_decoded[i].reshape(64,64)
-#    #cv2.imshow('output',decoded)
-#    cv2.waitKey(0)
-#    cv2.imwrite('Tony1/Tony_Blair.'+ str(i)+'.jpeg',255*decoded)
-#    #fig.savefig('face'+ str(i)+ '.jpg') use this to save the fig when plt is used
-#    
-#save_img()    
-#plt.show()
-#    
-    
-    
+ 
