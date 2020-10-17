@@ -222,10 +222,11 @@ x_test = x_test.astype('float32') / 255
 
 #%%
 test1 = []
+test_shape = y_test.shape
 def convert_to_1d():
     
     #testvalue=[]
-    for i in range(500):
+    for i in range(test_shape[0]):
         if (y_test[i] == np.array([1,0,0,0,0,0,0,0,0,0,0])).all():
             test1.append(0)
         elif (y_test[i] == np.array([0,1,0,0,0,0,0,0,0,0,0])).all():
@@ -258,10 +259,10 @@ test2 = convert_to_1d()
 #%%
 # network parameters
 input_shape = (original_dim, )
-intermediate_dim = 1024
-batch_size = 128
+intermediate_dim = 2048
+batch_size = 64
 latent_dim = 2
-epochs = 50 #default:50
+epochs = 2 #default:50
 
 # VAE model = encoder + decoder
 # build encoder model

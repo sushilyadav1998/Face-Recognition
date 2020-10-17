@@ -57,7 +57,7 @@ def sampling(args):
 #%%
 def plot_results(models,
                  data,
-                 batch_size=128,
+                 batch_size=64,
                  model_name="vae_mnist"):
     """Plots labels and MNIST digits as a function of the 2D latent vector
     # Arguments
@@ -90,7 +90,7 @@ def plot_results(models,
 
     filename = os.path.join(model_name, "digits_over_latent.png")
     # display a 30x30 2D manifold of digits
-    n = 50
+    n = 14
     digit_size = 64
     figure = np.zeros((digit_size * n, digit_size * n))
     # linearly spaced coordinates corresponding to the 2D plot
@@ -103,7 +103,8 @@ def plot_results(models,
             z_sample = np.array([[xi, yi]])
             x_decoded = decoder.predict(z_sample)
             digit = x_decoded[0].reshape(digit_size, digit_size)
-            #cv2.imwrite('New_VAE_Database/Tony_Blair/Tony_Blair.'+ str(i)+'.jpeg',255*digit)
+            for r in range(150):
+                cv2.imwrite('Database_NON_IR\SelfdatabaseVAE/Siddharth_Gaud.'+ str(r)+'.jpeg',255*digit)
             figure[i * digit_size: (i + 1) * digit_size,
                    j * digit_size: (j + 1) * digit_size] = digit
 
@@ -126,7 +127,7 @@ def plot_results(models,
 #LFWdataset1
 #(64)VAE_Self_DB
 #Train_dir = r'C:\Users\sushilkumar.yadav\Desktop\vmware\Personal\Research\Image_recognition_in_wild_using_Deep_Learning\Database_FR\LFW_Database_ind\Tony_Blair'
-Train_dir = r'C:\Users\sushilkumar.yadav\Desktop\vmware\Personal\Research\Image_recognition_in_wild_using_Deep_Learning\Database_FR\Database_NON_IR\Selfdatabase'
+Train_dir = r'C:\Users\sushilkumar.yadav\Desktop\vmware\Personal\Research\Image_recognition_in_wild_using_Deep_Learning\Database_FR\Database_NON_IR\Siddharth1'
 Img_size = 64 #256
 
 LR = 0.01
@@ -173,8 +174,8 @@ def create_training_data():
 
 #%%Load Traing and Testing Data:
 train_data = create_training_data()
-train = train_data[:-50] 
-test = train_data[-100:]
+train = train_data[:-1] 
+test = train_data[-5:]
 #%%
 x_train= np.array([i[0] for i in train]).reshape(-1, Img_size, Img_size, 1)
 y_train = np.array([i[1] for i in train])
@@ -225,15 +226,13 @@ def convert_to_1d():
         
 test2 = convert_to_1d()
 
-
-
 #%%
 # network parameters
 input_shape = (original_dim, )
-intermediate_dim = 3096
-batch_size = 128
+intermediate_dim = 3600
+batch_size = 64
 latent_dim = 2
-epochs = 20 #default:50
+epochs = 30                   #default:50
 
 # VAE model = encoder + decoder
 # build encoder model
